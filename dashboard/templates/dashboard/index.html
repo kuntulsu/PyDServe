@@ -1,0 +1,211 @@
+{%extends 'dashboard/base.html'%}
+{%block main%}
+<style type="text/css">
+    /*
+*
+* ==========================================
+* CUSTOM UTIL CLASSES
+* ==========================================
+*
+*/
+
+.progress {
+  width: 150px;
+  height: 150px;
+  background: none;
+  position: relative;
+}
+
+.progress::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 6px solid #eee;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.progress>span {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.progress .progress-left {
+  left: 0;
+}
+
+.progress .progress-bar {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border-width: 6px;
+  border-style: solid;
+  position: absolute;
+  top: 0;
+}
+
+.progress .progress-left .progress-bar {
+  left: 100%;
+  border-top-right-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-left: 0;
+  -webkit-transform-origin: center left;
+  transform-origin: center left;
+}
+
+.progress .progress-right {
+  right: 0;
+}
+
+.progress .progress-right .progress-bar {
+  left: -100%;
+  border-top-left-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-right: 0;
+  -webkit-transform-origin: center right;
+  transform-origin: center right;
+}
+
+.progress .progress-value {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/*
+*
+* ==========================================
+* FOR DEMO PURPOSE
+* ==========================================
+*
+*/
+
+
+.rounded-lg {
+  border-radius: 1rem;
+}
+
+.text-gray {
+  color: #aaa;
+}
+
+div.h4 {
+  line-height: 1rem;
+}
+
+  </style>
+<div class="container">
+	<div class="alert alert-info">
+		<img alt="distroimg" style="width: 30px" src="https://distrowatch.com/images/yvzhuwbpy/{{distro}}.png"><b>SysName : {{sysname}}</b>
+	</div>
+	<!--Round Progressbar Here -->
+	<div class="progressing">
+	<div class="row">
+		<div class="col-md-4 mb-5">
+        	<h2 class="h6 font-weight-bold text-center mb-4">CPU</h2>
+
+        <!-- Progress bar 1 -->
+        
+        	        <div class="cpu-progress progress mx-auto">
+          <span class="progress-left">
+            <span class="progress-bar progress-cpu"></span>
+          </span>
+          <span class="progress-right">
+            <span class="progress-bar progress-cpu"></span>
+          </span>
+          <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+            <div class="h2 font-weight-bold"><span class="cpu-load"></span><sup class="small">%</sup></div>
+          </div>
+        </div>
+        <!-- END -->
+
+        <!-- Demo info -->
+        <div class="row text-center mt-4">
+          <div class="col-12">
+          	{{cpuname}}
+          </div>
+          <div class="col-12">
+            <a href="#">More About CPU</a>
+          </div>
+        </div>
+        <!-- END -->
+		</div>
+
+		<!-- Memory -->
+				<div class="col-md-4 mb-5">
+        	<h2 class="h6 font-weight-bold text-center mb-4">Memory</h2>
+
+        <!-- Progress bar 1 -->
+        <div class="mem-progress progress mx-auto">
+          <span class="progress-left">
+            <span class="progress-bar progress-mem"></span>
+          </span>
+          <span class="progress-right">
+            <span class="progress-bar progress-mem"></span>
+          </span>
+          <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+            <div class="h2 font-weight-bold"><span class="mem-load"></span><sup class="small">%</sup></div>
+          </div>
+        </div>
+        <!-- END -->
+
+        <!-- Demo info -->
+        <div class="row text-center mt-4">
+          <div class="col-6 border-right">
+            <div class="h4 font-weight-bold mb-0">{{meminfo.total_mem}} G</div><span class="small text-gray">RAM in Total</span>
+          </div>
+          <div class="col-6">
+            <div class="h4 font-weight-bold mb-0">{{meminfo.free_mem}} G</div><span class="small text-gray">RAM Available</span>
+          </div>
+          <div class="col-12">
+            <a href="#">More About RAM</a>
+          </div>
+        </div>
+        <!-- END -->
+		</div>
+		<!-- end of memory -->
+		<!-- disk -->
+				<div class="col-md-4 mb-5">
+        	<h2 class="h6 font-weight-bold text-center mb-4">Disk Usage</h2>
+
+        <!-- Progress bar 1 -->
+        <div class="disk-progress progress mx-auto" data-value='80'>
+          <span class="progress-left">
+            <span class="progress-bar progress-disk"></span>
+          </span>
+          <span class="progress-right">
+            <span class="progress-bar progress-disk"></span>
+          </span>
+          <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+            <div class="h2 font-weight-bold"><span class="disk-load"></span><sup class="small">%</sup></div>
+          </div>
+        </div>
+        <!-- END -->
+
+        <!-- Demo info -->
+        <div class="row text-center mt-4">
+          <div class="col-6 border-right">
+            <div class="h4 font-weight-bold mb-0">{{diskinfo.mp}}</div><span class="small text-gray">is mounted in filesystem</span>
+          </div>
+          <div class="col-6">
+            <div class="h4 font-weight-bold mb-0">{{diskinfo.disk_free}} G</div><span class="small text-gray">Free of {{diskinfo.disk_total}} G in Total</span>
+          </div>
+          <div class="col-12">
+            <a href="#">More About Disk</a>
+          </div>
+        </div>
+        <!-- END -->
+		</div>
+		<!-- end of disk -->
+	</div>
+        </div>
+	<!-- End Of round progressbar -->
+</div>
+
+{%endblock%}

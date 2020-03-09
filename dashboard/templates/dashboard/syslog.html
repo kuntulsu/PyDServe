@@ -1,0 +1,23 @@
+{%extends 'dashboard/base.html'%}
+{%block main%}
+<h4>PyDServe : SysLog</h4>
+{%if request.GET.expand == 'True'%}
+	<div class="alert alert-info">
+	Showing all ({{lenlogs}}) of Syslog <a href="{%url 'syslog'%}">Show Less</a>
+	
+</div>
+
+{%else%}
+<div class="alert alert-info">
+	Showing last 15 of {{lenlogs}} in total lines in Syslog <a href="{%url 'syslog'%}?expand=True">Show All</a>
+	
+</div>
+{%endif%}
+<div class="container">
+		{%if request.GET.expand == 'True'%}
+			<pre>{{logs}}</pre>
+		{%else%}
+			<pre>{%for x in logs%}{{x}}{%endfor%}</pre>
+		{%endif%}
+	</div>
+{%endblock%}

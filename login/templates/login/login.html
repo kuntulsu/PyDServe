@@ -1,0 +1,75 @@
+{%load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login First!</title>
+	<link rel="stylesheet" type="text/css" href="{%static 'assets/css/bootstrap-material-design.min.css'%}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+		<style type="text/css">
+		@font-face{
+			font-family: sourcesanspro;
+			src:url({%static 'assets/font/SourceSansPro-Regular.ttf'%});
+		}
+		body{
+			background-color: #f4f4ff;
+			margin:0;
+			font-family: sourcesanspro;
+		}
+		.floated-alert{
+			top:10;
+			right: 10;
+			position: fixed;
+			float: right;
+		}
+	</style>
+{%if login_status == 'failure'%}
+	<div class="container">
+		<div style="top:10px;right: 10px;position: fixed;z-index: 99" class="alert alert-warning alert-dismissible fade show" role="alert">
+		  <strong>Login Failure</strong> Something bad happen while we searching the matched user!
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+	</div>
+{%endif%}
+<div class="row">
+	<div class="container mt-5">
+		<div class="card col-md-4" style="margin:0 auto">
+				<div class="container mt-3">
+					<h4 class="text-center">PyDServ Authentication</h4>
+					
+				</div>
+			<form action="{%url 'auth'%}" method="post" accept-charset="utf-8">
+				{%csrf_token%}
+			  <div class="row">
+			  		<div class="container">
+			  			<div class="form-group is-focused">
+					    <label for="username" class="bmd-label-floating">Username</label>
+					    <input type="text" name="username" autocomplete="off" autofocus class="form-control" id="username" required>
+					    <span class="bmd-help">The Username will automatically lowercase'ed during submit .</span>
+					  </div>
+			  		<div class="form-group">
+					    <label for="password" class="bmd-label-floating">Password</label>
+					    <input type="password" name="password" class="form-control" id="password" required>
+					    <span class="bmd-help">Your password for your username.</span>
+					  </div>
+					  <div class="form-group">
+			  			<input type="submit" name="submit" class="btn btn-raised btn-info">
+			  		</div>
+			  		</div>
+			  		
+			  </div>
+		</form>		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	
+</script>
+<script src="{%static 'assets/jquery/jquery.min.js'%}"></script>
+<script src="{%static 'assets/js/popper.min.js'%}"></script>
+<script src="{%static 'assets/js/bootstrap-material-design.min.js'%}"></script>
+<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+</html>
