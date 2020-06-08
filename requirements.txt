@@ -1,6 +1,6 @@
 asgiref==3.2.3
 distro==1.4.0
-Django==3.0.3
+Django==3.0.7
 mysqlclient==1.4.6
 psutil==5.7.0
 py-cpuinfo==5.0.0
