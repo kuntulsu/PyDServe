@@ -1,0 +1,37 @@
+
+
+<div class="content">
+	<h4>SysAdmin :: Network Manager</h4>
+
+{%if not device%}
+<div class="alert alert-danger">No Device found for <b>{{request.GET.device}}</b>
+</div>
+{%endif%}
+{%if request.GET.device == 'lo'%}
+<div class="alert alert-info"> Device <b>{{request.GET.device}}</b> is unmanagable</div>
+{%endif%}
+
+<div class="alert alert-warning">
+	Warning : If you're About to <span title="due to os compatible, we're having trouble to resolve this feature, we're working hard to make this possible to other debian-like"><b><u>Change the IP Configuration</u></b></span>, we're highly recommended to use <a href="{%url 'web_terminal'%}">command</a> manually,
+</div>
+
+<div class="main-content">
+	<div class="row">
+		<div class="col-md-4 pre">
+Device Summary : {{request.GET.device}}<br>
+Is Up : {{status.isup}}
+ {%if status.isup%}
+ 	<a href="#">Disable Device</a>
+ {%endif%}
+ {%if not status.isup%}
+ 	<a href="#">Enable Device</a>
+ {%endif%}
+ <br>
+{%for x,y in device.items%}
+{{x}} : {{y}}<br>
+{%endfor%}
+		</div>
+	</div>
+</div>
+
+</div>

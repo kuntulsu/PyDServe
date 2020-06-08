@@ -1,0 +1,71 @@
+<div class="container">
+	<h4>PyDServe Required Packages and Modules</h4>
+	{%if request.GET.mod_error%}
+		<div class="alert alert-danger">
+			You redirected to this page because <code>ModuleNotFoundError</code> was raised, check required modules below
+		</div>
+	{%endif%}
+	<div class="row">
+		<div class="col-md-6">
+			<h5>Modules <sup>Python Modules</sup></h5>
+			<span id="modHelper" class="font-weight-bold"></span>
+			<div class="pre mt-3" id="modules">
+				{%for key,value in modules.items%}
+					<div class="container">
+						<div id="module{{key}}" class="p-1 mb-3 rounded">
+						{{key}} (<a class="text-dark" href="https://pypi.org/project/{{key}}">See on PyPI</a>) {%if value.installed %}
+							<script>
+								$("#module{{key}}").addClass("bg-success")
+							</script>
+						{%else%}
+						<script>
+							$("#module{{key}}").addClass("bg-danger")
+						</script>
+						{%endif%}
+						<ul>
+							<li>Path : {{value.path}}</li>
+						</ul>
+					</div>
+					</div>
+				{%endfor%}
+			</div>
+		</div>
+		<div class="col-md-6">
+			<h5>Utilities <sup>Executables</sup></h5>
+			<span id="execHelper" class="font-weight-bold"></span>
+			<div class="pre mt-3" id="executable">
+				{%for key,values in utilities.items%}
+					<div id="util{{key}}" class="p-1 mb-3 rounded">
+						<div class="container">
+							{{key}}
+						{%if values.executable is None%}
+							<ul>
+								<li>Executable : {{values.executable}}</li>
+							</ul>
+							<script>
+								$("#util{{key}}").addClass("bg-danger")
+							</script>
+						{%else%}
+							<ul>
+								<li>Executable : {{values.executable}}</li>
+							</ul>
+							<script>
+								$("#util{{key}}").addClass("bg-success")
+							</script>
+						{%endif%}
+						</div>
+					</div>	
+				{%endfor%}
+			</div>	
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function(){
+		var exec_success = $("#executable > .bg-success").length
+		var mod_success = $("#modules .bg-success").length
+		$("#execHelper").html(exec_success + "/" + '{{utilities|length}} requirements  was found')
+		$("#modHelper").html(mod_success + "/" + '{{modules|length}} requirements was found')
+	})
+
+</script>

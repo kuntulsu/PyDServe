@@ -19,6 +19,6 @@ from . import views
 urlpatterns = [
 	path('',views.index, name='redirector'),
     path('sudo/', admin.site.urls),
-   	path('login/',include('login.urls')),
+   	path('login/',include('login.urls'), name="loginfirst"),
     path('dashboard/', include('dashboard.urls'))
 ]

@@ -1,23 +1,15 @@
-{%extends 'dashboard/base.html'%}
-{%block main%}
-<h4>PyDServe : SysLog</h4>
-{%if request.GET.expand == 'True'%}
-	<div class="alert alert-info">
-	Showing all ({{lenlogs}}) of Syslog <a href="{%url 'syslog'%}">Show Less</a>
-	
-</div>
 
-{%else%}
-<div class="alert alert-info">
-	Showing last 15 of {{lenlogs}} in total lines in Syslog <a href="{%url 'syslog'%}?expand=True">Show All</a>
-	
-</div>
-{%endif%}
-<div class="container">
-		{%if request.GET.expand == 'True'%}
-			<pre>{{logs}}</pre>
-		{%else%}
-			<pre>{%for x in logs%}{{x}}{%endfor%}</pre>
-		{%endif%}
+<h4>PyDServe : SysLog</h4>
+	<div class="alert alert-warning border-warning">
+		due to execution time issue, we just showing 500 of syslog. You can see the rest of lines at <code>/var/log/syslog</code>
 	</div>
-{%endblock%}
+
+
+<div class="container">
+		<div class="table-responsive" style="border: 1px solid #C50ED2;padding:5px;max-height: 400px">
+			<pre>{%for x in logs%}{{x}}{%endfor%}</pre>
+		</div>
+	</div>
+<script>
+
+</script>

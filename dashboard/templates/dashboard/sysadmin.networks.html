@@ -1,0 +1,41 @@
+
+<h4>SysAdmin :: Networks</h4>
+
+<div class="container mt-5">
+	<div class="row">
+		<h5>Interfaces</h5>
+		<div class="col-lg-12 table-responsive">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<td>Interface</td>
+						<td>Physical Address</td>
+						<td>IPv4</td>
+						<td>IPv6</td>
+						<td>Subnet</td>
+						<td>Manage</td>
+					</tr>
+				</thead>
+				<tbody>
+					{%for x,y in addr.items%}
+							<tr>
+							<td>{{x}}</td>
+							<td>{{y.mac}}</td>
+							<td>{{y.ipv4}}</td>
+							<td>{{y.ipv6}}</td>
+							<td>{{y.netmask}}</td>
+							<td>
+								{%if x == "lo"%}
+									<a href="#" class="btn btn-raised btn-secondary w-100 disabled">unmanagable</a>
+								{%else%}
+						<a href="#" class="btn btn-raised btn-success w-100" onclick="loader('{%url 'sysnet'%}?device={{x}}') "><span class="fa fa-cog"></span>manage</a>
+								{%endif%}
+							</td>
+						</tr>
+						
+					{%endfor%}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

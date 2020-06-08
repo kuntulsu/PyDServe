@@ -1,0 +1,9 @@
+django
+cpuinfo
+distro
+asgiref
+MySQLdb
+psutil
+pytz
+sqlparse
+nmap

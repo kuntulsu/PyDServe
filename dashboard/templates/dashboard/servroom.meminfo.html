@@ -1,0 +1,148 @@
+
+<div class="container">
+  <span id="proved">meminfoexist</span>
+  <script>$("#proved").hide()</script>
+	<h4>Server Room : Memory ::</h4>
+	<div class="row mt-5 mb-5">
+		<div class="col-lg-4 mb-5">
+			<!-- Memory -->
+
+        <!-- Progress bar 1 -->
+        <div class="mem-progress progress mx-auto">
+          <span class="progress-left">
+            <span class="progress-bar progress-mem"></span>
+          </span>
+          <span class="progress-right">
+            <span class="progress-bar progress-mem"></span>
+          </span>
+          <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+            <div class="h2 font-weight-bold"><span class="mem-load">N/A</span><sup class="small">%</sup></div>
+            RAM
+            <div class="row mt-4">
+            	<span class="swap-load"></span>% Swap
+            </div>
+          </div>
+
+        </div>
+        <!-- END -->
+
+
+		<!-- end of memory -->
+		</div>
+		<div class="col-lg-4 pre">
+			<span class="loading">Rendering the Graph, Please Wait..</span>
+      <canvas id="overall">
+        
+      </canvas>
+		</div>
+		<div class="col-lg-4 pre">
+			{%for x in swap%}
+				{{x|safe}}
+			{%endfor%}
+		</div>
+
+	</div>
+</div>
+<script type="text/javascript">
+    mem_datarray = []
+    mem_labarray = []
+  $(document).ready(function (){
+
+setTimeout(function(){
+      $(".loading").hide()
+    },3000)
+
+
+      var main_thread = setInterval(function(){
+
+          $.getJSON("{%url 'sysload'%}?show=memory",function(data){
+
+
+            if(mem_datarray.length > 100)
+            {
+                mem_labarray.splice(0,1)
+                mem_datarray.splice(0,1)
+            }
+
+            mem_datarray.push(data.memory_load)
+            mem_labarray.push("")
+
+
+new Chart(document.getElementById("overall"), {
+          type: 'line',
+          data: {
+            legend : {
+              display : false
+            },
+            labels: mem_labarray,
+            datasets: [{ 
+                data: mem_datarray,
+                label: "Memory Graph",
+                borderColor: "#3e95cd",
+                fill: true
+              }
+            ]
+          },
+          options: {
+            legend:{
+              display:false,
+            },
+            scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero: true,
+                          min:0,
+                          max:100,
+                      }
+                  }]
+              },
+            elements : {
+              line: {
+                tension : 0
+              },
+              point : {
+                radius : 0
+              }
+            },
+            animation : false,
+            tooltips : false,
+          }
+        });
+
+
+
+            $(".mem-progress").each(function() {
+                var memvalue = data.memory_load;
+                $('.mem-load').html(data.memory_load)
+                var left = $(this).find('.progress-left .progress-bar');
+                var right = $(this).find('.progress-right .progress-bar');
+                left.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
+                if (memvalue > 0) {
+                  if (memvalue <= 40) {
+                    $('.progress-mem').css("border-color","#00cc00")
+                    right.css('transform', 'rotate(' + percentageToDegrees(memvalue) + 'deg)')
+                  } else if(memvalue > 40 && memvalue < 80){
+                    $('.progress-mem').css("border-color","#ff5722")
+                    right.css('transform', 'rotate(180deg)')
+                    left.css('transform', 'rotate(' + percentageToDegrees(memvalue - 50) + 'deg)')
+                  }else if (memvalue >= 80){
+                    $('.progress-mem').css("border-color","#f44336")
+                    right.css('transform', 'rotate(180deg)')
+                    left.css('transform', 'rotate(' + percentageToDegrees(memvalue - 50) + 'deg)')
+                  }
+                }
+
+              })
+            var swapvalue = data.swap_load;
+            $('.swap-load').html(data.swap_load)
+
+          })
+
+          if($("#proved").text() != "meminfoexist"){
+              clearInterval(main_thread)
+            }
+      },3000)
+  })
+
+
+</script>

@@ -1,0 +1,83 @@
+<style type="text/css">
+	.bmd-form-group .bmd-label-placeholder {
+    top: 2.1875rem;
+}
+code{
+	font-family: fira
+}
+</style>
+<div class="container">
+	<h4>File Finder</h4>
+	<div class="alert alert-info border-info">we are using <b>mlocate</b> so, try to run <code>updatedb</code> as <b>superuser</b> to update the file index</div>
+	 <div class="row">
+	 	<div class="col-md-4">
+	 		 <div class="form-inline">
+	 		 	<div class="form-group">
+			    <input type="text" id="QueryInput" name="fileFinder" autofocus="" class="form-control w-100" placeholder="Search Query.."><br>
+			    
+			  </div>
+			  <div class="row">
+			  	<div class="container">
+			  		<div class="form-group">
+					  	<input type="checkbox" id="QueryCaseSensitivity" checked class="form-control">&nbsp;Case Sensitive&nbsp;<span title="if you checked this, the query will be case-sensitive, for Example : 'myquery' and 'MyQuery' are different word that mean they will comes with different result" class="fa fa-question-circle"></span>
+					    <input type="checkbox" id="QueryExMedia" checked class="form-control">&nbsp;Exclude /media&nbsp;<span title="if you checked this, the query will be case-sensitive, for Example : 'myquery' and 'MyQuery' are different word that mean they will comes with different result" class="fa fa-question-circle"></span>
+					  </div>
+					  
+			  	</div>
+			  </div>
+			  <div class="form-group">
+					  	<button id="QuerySubmit" type="submit" class="btn btn-primary btn-raised btn-sm"><span class="fa fa-search"></span>Search</button>
+					  </div>
+			</div>
+	  <span class="form-group bmd-form-group"> <!-- needed to match padding for floating labels -->
+	    
+	  </span>
+	 		 </div>
+	 	</div>
+	 	<div class="col-md-12">
+	 		<div class="alert alert-danger border-danger" id="alertQueryError">
+	 			
+	 		</div>
+	 		<div class="alert alert-success border-success" id="alertQueryResult">Query Performed successfully, found (<span id="countQueryResult"></span>) matched for <b id="textQuery"></b></div>
+	 		<div class="table-responsive" style="max-height: 400px;padding: 4px;border: 2px solid ">
+
+	 			<pre  id="QueryResult">Result will be in here.</pre>
+	 		</div>
+	 	</div>
+	 </div>
+</div>
+<script>
+	$("#alertQueryResult").hide()
+	$("#alertQueryError").hide()
+	$("#QuerySubmit").click(function(){
+		$("#alertQueryResult").hide()
+		$("#alertQueryError").hide()
+		$("#QueryResult").html("Searching the Query...")
+		var QueryInput = $("#QueryInput").val()
+		var QueryCaseSens = document.getElementById("QueryCaseSensitivity").checked
+
+		$.post("{%url 'filefinder_post'%}",{
+			'QueryInput' : QueryInput,
+			'QueryCaseSens' : QueryCaseSens,
+		},function(responseText,status){
+			if(status == 'success'){
+				if(responseText['result'] == 'directory'){
+					$("#alertQueryError").html("the query "+QueryInput+" was found but seems like that is just a directory..")
+					$("#alertQueryError").show()
+					$("#QueryResult").html("Directory Detected.")
+					return
+				}else if(responseText['result_count'] == "100"){
+					$("#alertQueryError").html("due to execution time issue, we just showing 100 result of matched query. <b>Tip : try to use specific query</b>")
+					$("#alertQueryError").show()
+				}
+				$("#countQueryResult").html(responseText['result_count'])
+				$("#textQuery").html(QueryInput)
+				$("#alertQueryResult").show()
+				$("#QueryResult").html(responseText['result'])
+			}else{
+				console.log(status)
+				$("#QueryResult").html("an error occured")
+			}
+		})
+	})
+</script>

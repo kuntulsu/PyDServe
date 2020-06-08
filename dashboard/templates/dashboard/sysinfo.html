@@ -1,0 +1,67 @@
+
+
+<h4>System Information ::</h4>
+	<div class="container">	
+		<div class="row">
+
+			<div class="col-md-12">
+				<!-- Sysinfo's Stuff -->
+								<!-- Distro Information -->
+						<h5 class="text-center" id="dist">:: Linux Distribution ::</h5>
+						<div class="table-responsive">
+								
+							
+							<table class="sysinfo table table-bordered table-striped ">
+								
+							<thead>
+								<tr class="bg-dark text-center">
+									<td>Items</td>
+									<td>Value</td>
+								</tr>
+							</thead>
+							<tbody>
+								{%for x,y in dist.items%}
+									{%if x == "version_parts"%}
+										<tr>
+											<td>{{x}}</td>
+											<td>{{y.major}}.{{y.minor}}.{{y.build_number}}</td>
+										</tr>
+									{%else%}
+										<tr>
+											<td>{{x}}</td>
+											<td>{{y|urlize}}</td>
+										</tr>
+									{%endif%}
+								{%endfor%}
+							</tbody>
+							</table>
+						</div>
+
+								<!-- HTTP Headers Information -->
+						<h5 class="text-center" id="headers">:: Http Headers ::</h5>
+						<div class="table-responsive">
+							
+							<table class="sysinfo table table-bordered table-striped">
+								<thead class="bg-dark text-center">
+									<tr>
+										<td>Items</td>
+										<td>Value</td>
+									</tr>
+								</thead>
+								<tbody>
+							{%for x,y in headers.items%}
+								
+									<tr>
+										<td>{{x}}</td>
+										<td>{{y}}</td>
+									</tr>
+								
+							{%endfor%}
+							</tbody>
+							</table>
+						</div>
+				<!-- End of Sysinfo Stuff -->
+			</div>
+		</div>
+	</div>
+

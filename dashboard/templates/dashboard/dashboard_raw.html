@@ -1,8 +1,5 @@
-{%extends 'dashboard/base.html'%}
-{%block main%}
-<style type="text/css">
 
-  </style>
+
   <span id="proved">exist</span>
   <script>$("#proved").hide()</script>
 <div class="container">
@@ -111,7 +108,7 @@
 	<!-- End Of round progressbar -->
 </div>
 <script type="text/javascript">
-    
+  
   $(document).ready(function (){
       var main_thread = setInterval(function(){
           $.getJSON("{%url 'sysload'%}",function(data){
@@ -187,7 +184,6 @@
             console.log("log")
             clearInterval(main_thread)
           })
-
       },3000)
 
   })
@@ -196,4 +192,3 @@
 
 
 </script>
-{%endblock%}

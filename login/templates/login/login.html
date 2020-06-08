@@ -17,17 +17,34 @@
 			margin:0;
 			font-family: sourcesanspro;
 		}
-		.floated-alert{
-			top:10;
-			right: 10;
-			position: fixed;
-			float: right;
+		.alert{
+			font-size: 15px
 		}
 	</style>
-{%if login_status == 'failure'%}
+{%if request.GET.from == 'authenticator'%}
+	<div class="container mt-5">
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		  <strong>Login Failure</strong> Cannot Authenticate The Given Credentials
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+	</div>
+{%endif%}
+{%if request.GET.from == 'dlogout'%}
 	<div class="container">
-		<div style="top:10px;right: 10px;position: fixed;z-index: 99" class="alert alert-warning alert-dismissible fade show" role="alert">
-		  <strong>Login Failure</strong> Something bad happen while we searching the matched user!
+		<div class="alert alert-info alert-dismissible fade show" role="alert">
+		  <strong>Logout Successful</strong> Logout was Successfully Performed.
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+	</div>
+{%endif%}
+{%if request.GET.from == 'dashboardredirector'%}
+	<div class="container">
+		<div class="alert alert-info alert-dismissible fade show" role="alert">
+		  <strong>Failed Render Dashboard</strong> Please Login to Proceed.
 		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
 		    <span aria-hidden="true">&times;</span>
 		  </button>
@@ -46,14 +63,14 @@
 			  <div class="row">
 			  		<div class="container">
 			  			<div class="form-group is-focused">
-					    <label for="username" class="bmd-label-floating">Username</label>
+					    <label for="username" class="bmd-label-floating">Username or Email</label>
 					    <input type="text" name="username" autocomplete="off" autofocus class="form-control" id="username" required>
-					    <span class="bmd-help">The Username will automatically lowercase'ed during submit .</span>
+					    <span class="bmd-help">Insert your registered Username or Email .</span>
 					  </div>
 			  		<div class="form-group">
 					    <label for="password" class="bmd-label-floating">Password</label>
 					    <input type="password" name="password" class="form-control" id="password" required>
-					    <span class="bmd-help">Your password for your username.</span>
+					    <span class="bmd-help">Please Enter Your Password.</span>
 					  </div>
 					  <div class="form-group">
 			  			<input type="submit" name="submit" class="btn btn-raised btn-info">

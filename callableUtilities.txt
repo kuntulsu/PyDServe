@@ -1,0 +1,12 @@
+which
+tail
+ip
+locate
+updatedb
+shellinaboxd
+swaplabel
+cat
+blkid
+lsblk
+nmap
+yoloo

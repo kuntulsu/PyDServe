@@ -1,0 +1,256 @@
+
+
+  <span id="proved">cpuinfoexist</span>
+  <script>$("#proved").hide()</script>
+<div class="container">
+	<h4>Server Room : CPU ::</h4>
+
+	<div class="row mt-5">
+		<div class="col-lg-2 mb-3">
+			        <!-- Progress bar 1 -->
+        
+        	<div class="cpu-progress progress mx-auto">
+          <span class="progress-left">
+            <span class="progress-bar progress-cpu"></span>
+          </span>
+          <span class="progress-right">
+            <span class="progress-bar progress-cpu"></span>
+          </span>
+          <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+            <div class="h3" style="font-family: fira"><span class="cpu-load"></span><sup class="small">%</sup></div>
+          </div>
+        </div>
+        <!-- END -->
+
+		</div>
+		<div class="col-lg-4 mb-3">
+
+			<span class="loading">Rendering the Graph, Please Wait..</span>
+			<span>Average : <span id="cpuavg"></span>%</span>
+			<canvas id="cpuOverall">
+				
+			</canvas>
+		</div>
+		<div class="col-lg-6 mb-3">
+			<div class="pre">
+				Processor : {{cpuinfo.brand}} x{{psutil.cpu_count}}<br>
+				Vendor ID : {{cpuinfo.vendor_id}}<br>
+				Machine : {{distro.os_release_info.name}} {{distro.os_release_info.version}}<br>
+				Kernel Version : {{distro.os.uname.release}}<br>
+				Architecture : {{cpuinfo.arch|lower}}<br>
+				Hz		: {{psutil.cpu_freq.max}} Mhz
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<span class="loading">Rendering the Graph, Please Wait..</span>
+		<canvas id="cpuEach"  height="250">
+			
+		</canvas>
+	</div>	
+	<div class="row">
+		<div class="table-responsive">
+			<table class="sysinfo table table-bordered table-striped">
+
+				<thead class="bg-dark text-center">
+					<tr>
+						<td>Items</td>
+						<td>Value</td>
+					</tr>
+				</thead>
+				<tbody>
+					{%for x,y in cpuinfo.items %}
+						{%if x == "flags"%}
+							<tr>
+								<td>{{x}}</td>
+								<td>{{y|join:" "}}</td>
+							</tr>
+						{%else%}
+							<tr>
+							<td>{{x}}</td>
+							<td>{{y}}</td>
+						</tr>
+						{%endif%}		
+					{%endfor%}
+				</tbody>
+			</table>
+		</div>
+		<button id="rawdatareveal" class="btn btn-secondary btn-raised">Hide/Show Raw Data</button>
+		<div id="rawdata">
+			<h5>Raw Data</h5>
+			<div class="pre" id="cpuinforaw">
+				<div class="container">
+					{%for x in cpu_raw%}
+					<li>{{x}}<br>
+				{%endfor%}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$("#rawdatareveal").click(function(){
+		$("#rawdata").toggle()
+	})
+	$("#rawdata").hide()
+
+  $(document).ready(function (){
+  	setTimeout(function(){
+  		$(".loading").hide()
+  	},3000)
+
+
+  	  datarray = []
+  	  labarray = []
+
+  	  {%for x in cpuiter_raw%}
+  	  	{{x|safe}} = []
+  	  {%endfor%}
+  	  // Chart.defaults.global.legend.display = false;
+
+      var main_thread = setInterval(function(){
+          $.getJSON("{%url 'sysload'%}?show=cpu",function(data){
+          		if(datarray.length > 100){
+          			labarray.splice(0,1)
+          			datarray.splice(0,1)
+          			{%for x in cpuiter_raw%}
+			  	  	{{x|safe}}.splice(0,1)
+			  	  {%endfor%}
+          		}
+
+          		datarray.push(data.cpu_load)
+          		labarray.push("")
+          		{%for x in cpuiter%}
+          		{{x}}
+          		{%endfor%}
+          		
+    chartOverall = 	new Chart(document.getElementById("cpuOverall"), {
+				  type: 'line',
+				  data: {
+				  	legend : {
+				  		display : false
+				  	},
+				    labels: labarray,
+				    datasets: [{ 
+				        data: datarray,
+				        label: "CPU Graph",
+				        borderColor: "#3e95cd",
+				        fill: true
+				      }
+				    ]
+				  },
+				  options: {
+				  	legend:{
+				  		display:false,
+				  	},
+				  	scales: {
+			            yAxes: [{
+			                ticks: {
+			                    beginAtZero: true,
+			                    min:0,
+			                    max:100,
+			                }
+			            }]
+			        },
+				  	elements : {
+				  		line: {
+				  			// tension : 0
+				  		},
+				  		point : {
+				  			radius : 0
+				  		}
+				  	},
+				  	animation : false,
+				    tooltips : false,
+				  }
+				});
+
+
+
+
+
+chartEach = new Chart(document.getElementById("cpuEach"), {
+				  type: 'line',
+				  data: {
+
+				    labels: labarray,
+				    datasets: [ 
+				      {%for x in cpuhelper%}
+				      {
+				      	{{x|safe}}
+				      },
+				      {%endfor%}
+				    ]
+				  },
+				  options: {
+				  	maintainAspectRatio: false,
+				  	title : {
+				  		display : true,
+				  		text : 'Showing CPU Clock for Each Core\'s',
+				  	},
+				  	scales: {
+			            yAxes: [{
+			                ticks: {
+			                    beginAtZero: true,
+			                    min:0,
+			                    max:100,
+			                }
+			            }]
+			        },
+				  	elements : {
+				  		line: {
+				  			// tension : 0
+				  		},
+				  		point : {
+				  			radius : 0
+				  		}
+				  	},
+				  	animation : false,
+				    tooltips : false,
+				  }
+				});
+
+
+            $(".cpu-progress").each(function() {
+                var cpuvalue = data.cpu_load;
+                $('.cpu-load').html(data.cpu_load)
+                var cpuleft = $(this).find('.progress-left .progress-bar');
+                var cpuright = $(this).find('.progress-right .progress-bar');
+                cpuleft.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
+                if (cpuvalue > 0) {
+                  if (cpuvalue < 50) {
+                    $('.progress-cpu').css("border-color","#00cc00")
+                    cpuright.css('transform', 'rotate(' + percentageToDegrees(cpuvalue) + 'deg)')
+                  }
+                  else{
+                    $('.progress-cpu').css("border-color","#f44336")
+                    cpuright.css('transform', 'rotate(180deg)')
+                    cpuleft.css('transform', 'rotate(' + percentageToDegrees(cpuvalue - 50) + 'deg)')
+                  }
+                }
+
+              })
+          })
+
+
+          if($("#proved").text() != "cpuinfoexist"){
+            	clearInterval(main_thread)
+            }
+
+           // count averages cpu
+           var avg = 0
+          for (var x = 0,len = datarray.length;x < len;x++){
+          	avg = avg+datarray[x]
+          }
+          	avg = avg / datarray.length
+          	avg = avg.toFixed(2)
+          	$("#cpuavg").html(avg)
+      },3000)
+
+  })
+  $("#refresher").click(function(){
+
+    clearInterval(main_thread)
+    console.log("cleared")
+  })
+</script>

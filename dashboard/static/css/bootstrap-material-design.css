@@ -251,7 +251,7 @@ textarea {
   overflow: auto;
   resize: vertical; }
 
-fieldset {
+/*fieldset {
   min-width: 0;
   padding: 0;
   margin: 0;
@@ -266,7 +266,7 @@ legend {
   font-size: 1.5rem;
   line-height: inherit;
   color: inherit;
-  white-space: normal; }
+  white-space: normal; }*/
 
 progress {
   vertical-align: baseline; }
