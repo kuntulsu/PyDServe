@@ -1,18 +1,18 @@
 # PyDServe
 
-Kanggo Hanafi:
+Usage :
 
 
 ```bash
-$  cd ~/
+
 $  git clone https://github.com/kuntulsu/PyDServe.git
 $  cd PyDServe
-$  source bin/activate
-$  python3 manage.py runserver
+#  python3 manage.py runserver --noreload
 ```
 
-bukak browser : http://localhost:8000
+open url : http://localhost:8000
 
+*default credentials
 username : kuntulsu
 password : adminadmin
   
