@@ -12,7 +12,8 @@ $  cd PyDServe
 
 open url : http://localhost:8000
 
-*default credentials
+*default credentials*
+
 username : kuntulsu
 password : adminadmin
   
