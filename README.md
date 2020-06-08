@@ -7,7 +7,7 @@ Usage :
 
 $  git clone https://github.com/kuntulsu/PyDServe.git
 $  cd PyDServe
-#  python3 manage.py runserver --noreload
+$  sudo python3 manage.py runserver --noreload
 ```
 
 open url : http://localhost:8000
@@ -15,6 +15,7 @@ open url : http://localhost:8000
 *default credentials*
 
 username : kuntulsu
+
 password : adminadmin
   
   
