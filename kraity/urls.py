@@ -1,4 +1,4 @@
-"""PyDServe URL Configuration
+"""kraity URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -19,6 +19,6 @@ from . import views
 urlpatterns = [
 	path('',views.index, name='redirector'),
     path('sudo/', admin.site.urls),
-   	path('login/',include('login.urls'), name="loginfirst"),
+	path('login/',include('login.urls'), name="loginfirst"),
     path('dashboard/', include('dashboard.urls'))
 ]

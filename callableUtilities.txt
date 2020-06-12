@@ -8,5 +8,3 @@ swaplabel
 cat
 blkid
 lsblk
-nmap
-yoloo

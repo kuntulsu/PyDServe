@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>PyDServe : Administration</title>
+    <title>kraity : Administration</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -231,7 +231,7 @@ div.h4 {
   </style>
   <body class="app sidebar-mini rtl">
     <!-- Navbar-->
-    <header class="app-header" style="background: linear-gradient(to right, #c0392b 10%, #273c75 100%);"><a style="background-color:unset;font-family: unset;font-size: 20px " class="app-header__logo" href="{%url 'dashboard'%}">PyDServe Admin</a>
+    <header class="app-header" style="background: linear-gradient(to right, #c0392b 10%, #273c75 100%);"><a style="background-color:unset;font-family: unset;font-size: 20px " class="app-header__logo" href="{%url 'dashboard'%}">kraity Admin</a>
       <!-- Sidebar toggle button-->
       <a class="app-sidebar__toggle" href="javascript:void(0)" id="navtoggler" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
  
@@ -273,7 +273,7 @@ div.h4 {
     </a>
     <li class="dropdown-divider"></li>
     <a class="dropdown-item" href="javascript:void(0)">
-      <span><span class="fa fa-info-circle"></span>PyDServe : About</span>
+      <span><span class="fa fa-info-circle"></span>kraity : About</span>
     </a>
     <a class="dropdown-item" href="{%url 'logout'%}"><span class="fa fa-power-off"></span>Quit</a>
 
@@ -407,7 +407,7 @@ div.h4 {
 
       <div class="modal-body">
         <div class="alert alert-danger" id="offlineText">
-          <span>Ewww... the Server Seems not Reachable or PyDServe cannot handle request at the moment <span id="ajaxError"></span>. Try to Check if The Server or PyDServe went Down. Trying to reconnect...</span>
+          <span>Ewww... the Server Seems not Reachable or kraity cannot handle request at the moment <span id="ajaxError"></span>. Try to Check if The Server or kraity went Down. Trying to reconnect...</span>
         </div>
         <div id="sessionState">
           <div class="alert alert-info">We will ask you to authenticate to make sure you're still there for every 5 minutes mark. Please login to proceed
@@ -560,7 +560,7 @@ function loader(url){
       $("#offlineModal").modal('show')
       $("#offlineModal").modal('hide')
       $("#ajaxError").empty()
-      $("#loader").html("HTTP Request Failed (PyDServe : "+ xhr.status+ " " + xhr.statusText + ")")
+      $("#loader").html("HTTP Request Failed (kraity : "+ xhr.status+ " " + xhr.statusText + ")")
     }
   })
 }
@@ -577,7 +577,7 @@ function do_refresh(){
       $("#offlineModal").modal('show')
       $("#offlineModal").modal('hide')
       $("#ajaxError").empty()
-      $("#loader").html("HTTP Request Failed (PyDServe : "+ xhr.status+ " " + xhr.statusText + ")")
+      $("#loader").html("HTTP Request Failed (kraity : "+ xhr.status+ " " + xhr.statusText + ")")
     }
   })
 }
