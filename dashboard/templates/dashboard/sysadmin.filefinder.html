@@ -10,23 +10,32 @@ code{
 	<h4>File Finder</h4>
 	<div class="alert alert-info border-info">we are using <b>mlocate</b> so, try to run <code>updatedb</code> as <b>superuser</b> to update the file index</div>
 	 <div class="row">
-	 	<div class="col-md-4">
+	 	<div class="col-md-6">
 	 		 <div class="form-inline">
 	 		 	<div class="form-group">
-			    <input type="text" id="QueryInput" name="fileFinder" autofocus="" class="form-control w-100" placeholder="Search Query.."><br>
+			    <br>
 			    
 			  </div>
 			  <div class="row">
 			  	<div class="container">
-			  		<div class="form-group">
-					  	<input type="checkbox" id="QueryCaseSensitivity" checked class="form-control">&nbsp;Case Sensitive&nbsp;<span title="if you checked this, the query will be case-sensitive, for Example : 'myquery' and 'MyQuery' are different word that mean they will comes with different result" class="fa fa-question-circle"></span>
-					    <input type="checkbox" id="QueryExMedia" checked class="form-control">&nbsp;Exclude /media&nbsp;<span title="if you checked this, the query will be case-sensitive, for Example : 'myquery' and 'MyQuery' are different word that mean they will comes with different result" class="fa fa-question-circle"></span>
-					  </div>
-					  
+			  		
+					  	<div class="input-group mb-3">
+						  <div class="input-group-prepend">
+						    <div class="input-group-text">
+						      <input type="checkbox" id="isCaseSensitive">
+						      <span> Case Sentitive</span>
+
+						    </div>
+						    <input type="text" id="QueryInput" name="fileFinder" autofocus="" class="form-control w-100 pr-2 pl-2" placeholder="Search Query.." title="You can use the PATTERN , something like *.mp4 will search file that ends with mp4 extension">
+						    <button id="QuerySubmit" type="submit" class="btn btn-info btn-raised btn-sm"><span class="fa fa-search"></span>Search</button>
+						  </div>
+						  
+						  
+						</div>
 			  	</div>
 			  </div>
 			  <div class="form-group">
-					  	<button id="QuerySubmit" type="submit" class="btn btn-primary btn-raised btn-sm"><span class="fa fa-search"></span>Search</button>
+					  	
 					  </div>
 			</div>
 	  <span class="form-group bmd-form-group"> <!-- needed to match padding for floating labels -->
@@ -54,7 +63,7 @@ code{
 		$("#alertQueryError").hide()
 		$("#QueryResult").html("Searching the Query...")
 		var QueryInput = $("#QueryInput").val()
-		var QueryCaseSens = document.getElementById("QueryCaseSensitivity").checked
+		var QueryCaseSens = document.getElementById("isCaseSensitive").checked
 
 		$.post("{%url 'filefinder_post'%}",{
 			'QueryInput' : QueryInput,
@@ -66,8 +75,8 @@ code{
 					$("#alertQueryError").show()
 					$("#QueryResult").html("Directory Detected.")
 					return
-				}else if(responseText['result_count'] == "100"){
-					$("#alertQueryError").html("due to execution time issue, we just showing 100 result of matched query. <b>Tip : try to use specific query</b>")
+				}else if(responseText['result_count'] >= "500"){
+					$("#alertQueryError").html("due to execution time issue, we just showing 500 result of matched query. <b>Tip : try to use specific query</b>")
 					$("#alertQueryError").show()
 				}
 				$("#countQueryResult").html(responseText['result_count'])

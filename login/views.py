@@ -20,6 +20,6 @@ def authenticate(request):
 		request.session.set_expiry(300) # 5 minutes
 		return HttpResponseRedirect("../dashboard/")
 	else:
-		return HttpResponseRedirect("../login?from=authenticator")
+		return HttpResponseRedirect(f"../login?from=authenticator&username={username}")
 def test(request):
 	return HttpResponse(request.user.is_authenticated)

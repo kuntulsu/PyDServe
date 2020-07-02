@@ -3,21 +3,22 @@
   <span id="proved">cpuinfoexist</span>
   <script>$("#proved").hide()</script>
 <div class="container">
+	<div class="alert alert-info border-info">Summary : <b>Current</b> : <span id="cpucurr"></span>% | <b>Max </b>: <span id="cpumax"></span>% | <b>Min </b>: <span id="cpumin"></span>% | <b>Average </b> : <span id="cpuavg"></span>%</div>
 	<h4>Server Room : CPU ::</h4>
 
 	<div class="row mt-5">
 		<div class="col-lg-2 mb-3">
 			        <!-- Progress bar 1 -->
         
-        	<div class="cpu-progress progress mx-auto">
-          <span class="progress-left">
-            <span class="progress-bar progress-cpu"></span>
+        	<div class="cpu-progress progress circle-progress mx-auto">
+          <span class="circle-progress-left">
+            <span class="circle-progress-bar progress-bar progress-cpu"></span>
           </span>
-          <span class="progress-right">
-            <span class="progress-bar progress-cpu"></span>
+          <span class="circle-progress-right">
+            <span class="circle-progress-bar progress-bar progress-cpu"></span>
           </span>
           <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-            <div class="h3" style="font-family: fira"><span class="cpu-load"></span><sup class="small">%</sup></div>
+            <div class="h2 font-weight-bold"><span class="cpu-load">N/A</span><sup class="small">%</sup></div>
           </div>
         </div>
         <!-- END -->
@@ -26,7 +27,6 @@
 		<div class="col-lg-4 mb-3">
 
 			<span class="loading">Rendering the Graph, Please Wait..</span>
-			<span>Average : <span id="cpuavg"></span>%</span>
 			<canvas id="cpuOverall">
 				
 			</canvas>
@@ -50,7 +50,7 @@
 	</div>	
 	<div class="row">
 		<div class="table-responsive">
-			<table class="sysinfo table table-bordered table-striped">
+			<table class="sysinfo table table-bordered table-striped table-sm">
 
 				<thead class="bg-dark text-center">
 					<tr>
@@ -99,12 +99,17 @@
   		$(".loading").hide()
   	},3000)
 
+  	//creating random hex color for each line of 
+  	bordercolor = []
+  	{%for x in cpu_percent%}
+  		bordercolor.push(genhex())
+  	{%endfor%}
 
   	  datarray = []
   	  labarray = []
 
-  	  {%for x in cpuiter_raw%}
-  	  	{{x|safe}} = []
+  	  {%for x in cpu_percent%}
+  	  	datarray{{forloop.counter0}} = []
   	  {%endfor%}
   	  // Chart.defaults.global.legend.display = false;
 
@@ -113,15 +118,15 @@
           		if(datarray.length > 100){
           			labarray.splice(0,1)
           			datarray.splice(0,1)
-          			{%for x in cpuiter_raw%}
-			  	  	{{x|safe}}.splice(0,1)
-			  	  {%endfor%}
+          			{%for x in cpu_percent%}
+			  	  		datarray{{forloop.counter0}}.splice(0,1)
+			  	  	{%endfor%}
           		}
 
           		datarray.push(data.cpu_load)
           		labarray.push("")
-          		{%for x in cpuiter%}
-          		{{x}}
+          		{%for x in cpu_percent%}
+          			datarray{{forloop.counter0}}.push(data.cpu_load_all[{{forloop.counter0}}])
           		{%endfor%}
           		
     chartOverall = 	new Chart(document.getElementById("cpuOverall"), {
@@ -174,10 +179,13 @@ chartEach = new Chart(document.getElementById("cpuEach"), {
 				  data: {
 
 				    labels: labarray,
-				    datasets: [ 
-				      {%for x in cpuhelper%}
+				    datasets: [
+				      {%for x in cpu_percent%}
 				      {
-				      	{{x|safe}}
+				      	data: datarray{{forloop.counter0}},
+				        label: "CPU {{forloop.counter0}} ("+ data.cpu_load_all[{{forloop.counter0}}] + "%)",
+				        borderColor: bordercolor[{{forloop.counter0}}],
+				        fill: true,
 				      },
 				      {%endfor%}
 				    ]
@@ -214,8 +222,8 @@ chartEach = new Chart(document.getElementById("cpuEach"), {
             $(".cpu-progress").each(function() {
                 var cpuvalue = data.cpu_load;
                 $('.cpu-load').html(data.cpu_load)
-                var cpuleft = $(this).find('.progress-left .progress-bar');
-                var cpuright = $(this).find('.progress-right .progress-bar');
+                var cpuleft = $(this).find('.circle-progress-left .circle-progress-bar');
+                var cpuright = $(this).find('.circle-progress-right .circle-progress-bar');
                 cpuleft.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
                 if (cpuvalue > 0) {
                   if (cpuvalue < 50) {
@@ -230,6 +238,8 @@ chartEach = new Chart(document.getElementById("cpuEach"), {
                 }
 
               })
+
+            $("#cpucurr").html(data.cpu_load)
           })
 
 
@@ -245,12 +255,24 @@ chartEach = new Chart(document.getElementById("cpuEach"), {
           	avg = avg / datarray.length
           	avg = avg.toFixed(2)
           	$("#cpuavg").html(avg)
+
+          	//count max
+          	$("#cpumax").html(Math.max.apply(null,datarray))
+          	//count min
+          	$("#cpumin").html(Math.min.apply(null,datarray))
       },3000)
 
   })
   $("#refresher").click(function(){
 
     clearInterval(main_thread)
-    console.log("cleared")
   })
+function genhex(){
+  hexcolor = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
+    color = ["#"]
+    for(var x = 0 ; x < 6; x++){
+        color.push(hexcolor[Math.floor(Math.random() * 16)])
+    }
+    return color.join("")
+}
 </script>

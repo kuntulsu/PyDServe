@@ -2,27 +2,24 @@
 <div class="container">
   <span id="proved">meminfoexist</span>
   <script>$("#proved").hide()</script>
+
+  <div class="alert alert-info border-info">Summary : <b>Current</b> : <span id="memcurr"></span>% | <b>Max </b>: <span id="memmax"></span>% | <b>Min </b>: <span id="memmin"></span>% | <b>Average </b> : <span id="memavg"></span>%</div>
 	<h4>Server Room : Memory ::</h4>
 	<div class="row mt-5 mb-5">
-		<div class="col-lg-4 mb-5">
+		<div class="col-lg-2 mb-5">
 			<!-- Memory -->
 
         <!-- Progress bar 1 -->
-        <div class="mem-progress progress mx-auto">
-          <span class="progress-left">
-            <span class="progress-bar progress-mem"></span>
+        <div class="mem-progress progress circle-progress mx-auto">
+          <span class="circle-progress-left">
+            <span class="circle-progress-bar progress-bar progress-mem"></span>
           </span>
-          <span class="progress-right">
-            <span class="progress-bar progress-mem"></span>
+          <span class="circle-progress-right">
+            <span class="circle-progress-bar progress-bar progress-mem"></span>
           </span>
           <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
             <div class="h2 font-weight-bold"><span class="mem-load">N/A</span><sup class="small">%</sup></div>
-            RAM
-            <div class="row mt-4">
-            	<span class="swap-load"></span>% Swap
-            </div>
           </div>
-
         </div>
         <!-- END -->
 
@@ -35,16 +32,21 @@
         
       </canvas>
 		</div>
-		<div class="col-lg-4 pre">
+		<div class="col-lg-6 pre">
 			{%for x in swap%}
 				{{x|safe}}
 			{%endfor%}
 		</div>
 
 	</div>
+  <div class="row">
+    <span class="loading">Rendering the Graph, Please Wait..</span>
+    <canvas id="memSwap" height="250"></canvas>    
+  </div>
 </div>
 <script type="text/javascript">
     mem_datarray = []
+    swap_datarray = []
     mem_labarray = []
   $(document).ready(function (){
 
@@ -61,10 +63,12 @@ setTimeout(function(){
             if(mem_datarray.length > 100)
             {
                 mem_labarray.splice(0,1)
+                swap_datarray.splice(0,1)
                 mem_datarray.splice(0,1)
             }
 
             mem_datarray.push(data.memory_load)
+            swap_datarray.push(data.swap_load)
             mem_labarray.push("")
 
 
@@ -80,10 +84,15 @@ new Chart(document.getElementById("overall"), {
                 label: "Memory Graph",
                 borderColor: "#3e95cd",
                 fill: true
-              }
+              },
             ]
           },
           options: {
+            
+            title : {
+              display : false,
+            },
+
             legend:{
               display:false,
             },
@@ -96,6 +105,7 @@ new Chart(document.getElementById("overall"), {
                       }
                   }]
               },
+
             elements : {
               line: {
                 tension : 0
@@ -111,11 +121,67 @@ new Chart(document.getElementById("overall"), {
 
 
 
+chartEach = new Chart(document.getElementById("memSwap"), {
+          type: 'line',
+          data: {
+
+            labels: mem_labarray,
+            datasets: [ 
+              {
+                data: mem_datarray,
+                label: "Memory ("+ data.memory_load + "%)",
+                borderColor: "#E4A572",
+                fill: true,
+              },
+              {
+                data: swap_datarray,
+                label: "Swap ("+ data.swap_load + "%)",
+                borderColor: "#67B673",
+                fill: true,
+              },
+            ]
+          },
+          options: {
+            maintainAspectRatio: false,
+            title : {
+              // display : true,
+              // text : 'Showing CPU Clock for Each Core\'s',
+            },
+            scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero: true,
+                          min:0,
+                          max:100,
+                      }
+                  }]
+              },
+            elements : {
+              line: {
+                // tension : 0
+              },
+              point : {
+                radius : 0
+              }
+            },
+            animation : false,
+            tooltips : false,
+          }
+        });
+
+
+
+
+
+
+
+
+
             $(".mem-progress").each(function() {
                 var memvalue = data.memory_load;
                 $('.mem-load').html(data.memory_load)
-                var left = $(this).find('.progress-left .progress-bar');
-                var right = $(this).find('.progress-right .progress-bar');
+                var left = $(this).find('.circle-progress-left .circle-progress-bar');
+                var right = $(this).find('.circle-progress-right .circle-progress-bar');
                 left.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
                 if (memvalue > 0) {
                   if (memvalue <= 40) {
@@ -135,12 +201,25 @@ new Chart(document.getElementById("overall"), {
               })
             var swapvalue = data.swap_load;
             $('.swap-load').html(data.swap_load)
-
+            $("#memcurr").html(data.memory_load)
           })
 
           if($("#proved").text() != "meminfoexist"){
               clearInterval(main_thread)
             }
+
+          var avg = 0
+          for (var x = 0,len = mem_datarray.length;x < len;x++){
+            avg = avg+mem_datarray[x]
+          }
+            avg = avg / mem_datarray.length
+            avg = avg.toFixed(2)
+            $("#memavg").html(avg)
+
+            //count max
+            $("#memmax").html(Math.max.apply(null,mem_datarray))
+            //count min
+            $("#memmin").html(Math.min.apply(null,mem_datarray))
       },3000)
   })
 

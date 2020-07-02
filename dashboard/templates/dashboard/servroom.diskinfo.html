@@ -1,42 +1,86 @@
-
-
-<div class="container">
-	<h4>Server Room : Disk ::</h4>
-	<div class="alert alert-info w-100">There is {{disklist|length}} disk(s) that are mounted and recognized in your system <a href="javascript:void(0)" id="alertHelper" class="text-info font-weight-bold">why my disk are not listed?</a>
-		<div id="desc">
-			<hr>
-			<p class="mb-1">
-				First and Lastly, we just list the disk that are recognized as storage device and <b>mounted</b> in your filesystem. you can make sure the disks are mounted. or you can try to mount it :
-				<br><br>
-				<code># mount [device] [directory]</code>
-				<br><br>
-				then <a href="javascript:void(0)" onclick="do_refresh()"><span class="fa fa-refresh"></span>Refresh</a> this page<br>
-				take note that you need to be root (#), see <code>mount --help</code> or <code>man mount</code>
-			</p>
-		</div>
-	</div>
 	<script>
 		$("#desc").hide()
 		$("#alertHelper").click(function(){
 			$("#desc").toggle(200)
 		})
 	</script>
+
+<div class="container">
+	<h4>Server Room : Disk ::</h4>
+	<div class="alert alert-info border-info">
+		Found <span id="part"></span> Partition(s) from <span id="device"></span> Drive(s)
+		
+		<hr>
+		Below is the Kernel Device Name, you can use this to filter the result(s)
+		<div class="input-group" id="toggler">
+	  
+		</div>
+	</div>
+
 	<div class="row mt-5">
 			
-			<div class="card-columns col">
-				{%for x in disklist%}
-				
-				{{x|safe}}
-				
-			{%endfor%}
-			
-				</div>
-			<div class="container mt-5">
-				<h5>Block Devices</h5>
-				<p>This is Block Device on your system based on <code>lsblk --fs</code> output</p>
-				<div class="table-responsive p-2">
-					<pre>{{raw_disk}}</pre>
-				</div>
-			</div>
-</div>
+			<div id="lsblk"  class="card-columns col"></div>
 
+	</div>
+<script type="text/javascript">
+
+	lsblk = JSON.stringify({{lsblk|safe}})
+	lsblk = JSON.parse(lsblk)
+	kerneldevname = []
+	part_count = 0
+	for (var x in lsblk.blockdevices){
+
+		if (lsblk.blockdevices[x].pkname == null){
+			kname = lsblk.blockdevices[x].kname
+		}else{
+			kname = lsblk.blockdevices[x].pkname
+		}
+		if (lsblk.blockdevices[x].type == 'part'){
+			part_count += 1
+		}
+		//collecting the kernel device name
+		if (kerneldevname.indexOf(kname) < 0){
+			kerneldevname.push(kname)
+		}
+
+
+			$("#lsblk").append(
+				'<div class="pre card text-white ' + kname + '" style="column-break-inside: avoid;border-radius:0;background-color:#343d46;border: 2px solid #273c75">'+
+					'<div class="card-body">' +
+						'<h6 class="text-center">'+ lsblk.blockdevices[x].path +'</h6>'+
+							'<ul>'+
+								'<li> Device : '+ lsblk.blockdevices[x].path +'</li>'+
+								'<li> Label : '+ lsblk.blockdevices[x].label +'</li>'+
+								'<li>UUID : '+ lsblk.blockdevices[x].uuid +'</li>'+
+		                		'<li>Size in Total : '+ lsblk.blockdevices[x].fssize + "(" + lsblk.blockdevices[x]['fsuse%'] + ")" + '</li>'+
+			                	'<li>Free		  : '+ lsblk.blockdevices[x].fsavail +'</li>'+
+			                	'<li>Used 		  : '+ lsblk.blockdevices[x].fsused +'</li>'+
+			                	'<li>Mounted In    : '+ lsblk.blockdevices[x].mountpoint +'</li>'+
+			                	'<li>Filesystem    : '+ lsblk.blockdevices[x].fstype +'</li>'+
+			                	'<li>Read Only : '+ lsblk.blockdevices[x].ro +'</li>'+
+			                	'<li>Type : '+ lsblk.blockdevices[x].type +'</li>'+
+			                	'<li>Removable : '+ lsblk.blockdevices[x].rm +'</li>'+
+	                		'</ul>'+
+					'</div>'+
+				'</div>'
+
+			);
+
+	}
+	for (f in kerneldevname){
+		$("#toggler").append(
+			'<div class="input-group-prepend">'+
+			    '<div class="input-group-text">'+
+			      '<input type="checkbox" checked onclick=\'devtoggler(\"' +kerneldevname[f] + '\")\'>'+
+			      '<span class="texthelper"> '+ kerneldevname[f] +'</span>'+
+			    '</div>'+
+		  '</div>'
+			)
+	}
+	$("#device").html(kerneldevname.length)
+	$("#part").html(part_count)
+function devtoggler(dev){
+	device = "."+dev
+	$(device).toggle()
+}
+</script>

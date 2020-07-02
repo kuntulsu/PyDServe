@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>kraity : Administration</title>
+    <title>Kraity : Administration</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,11 +41,11 @@
     code{
       font-family: fira;
     }
-    thead {
+/*    thead {
       background-color: #343a40;
       color: #fff;
       text-align: center;
-    }
+    }*/
         /*
 *
 * ==========================================
@@ -54,14 +54,14 @@
 *
 */
 
-.progress {
+.circle-progress {
   width: 150px;
   height: 150px;
   background: none;
   position: relative;
 }
 
-.progress::after {
+.circle-progress::after {
   content: "";
   width: 100%;
   height: 100%;
@@ -72,7 +72,7 @@
   left: 0;
 }
 
-.progress>span {
+.circle-progress>span {
   width: 50%;
   height: 100%;
   overflow: hidden;
@@ -81,11 +81,11 @@
   z-index: 1;
 }
 
-.progress .progress-left {
+.circle-progress .circle-progress-left {
   left: 0;
 }
 
-.progress .progress-bar {
+.circle-progress .circle-progress-bar {
   width: 100%;
   height: 100%;
   background: none;
@@ -96,7 +96,7 @@
   transition: 0.3s ease;
 }
 
-.progress .progress-left .progress-bar {
+.circle-progress .circle-progress-left .circle-progress-bar {
   left: 100%;
   border-top-right-radius: 80px;
   border-bottom-right-radius: 80px;
@@ -105,11 +105,11 @@
   transform-origin: center left;
 }
 
-.progress .progress-right {
+.circle-progress .circle-progress-right {
   right: 0;
 }
 
-.progress .progress-right .progress-bar {
+.circle-progress .circle-progress-right .circle-progress-bar {
   left: -100%;
   border-top-left-radius: 80px;
   border-bottom-left-radius: 80px;
@@ -118,7 +118,7 @@
   transform-origin: center right;
 }
 
-.progress .progress-value {
+.circle-progress .circle-progress-value {
   position: absolute;
   top: 0;
   left: 0;
@@ -228,10 +228,13 @@ div.h4 {
     #modalterm{
       z-index: 2002;
     }
+    .nav > a, #uptime{
+      text-shadow: 1px 1px 4px white;
+    }
   </style>
   <body class="app sidebar-mini rtl">
     <!-- Navbar-->
-    <header class="app-header" style="background: linear-gradient(to right, #c0392b 10%, #273c75 100%);"><a style="background-color:unset;font-family: unset;font-size: 20px " class="app-header__logo" href="{%url 'dashboard'%}">kraity Admin</a>
+    <header class="app-header" style="background: linear-gradient(to right, #c0392b 10%, #273c75 100%);"><a style="background-color:unset;font-family: unset;font-size: 20px " class="app-header__logo" href="{%url 'dashboard'%}">Kraity Admin</a>
       <!-- Sidebar toggle button-->
       <a class="app-sidebar__toggle" href="javascript:void(0)" id="navtoggler" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
  
@@ -265,7 +268,7 @@ div.h4 {
       <span><span class="fa fa-moon-o"></span>Toggle Light/Dark Theme</span>
     </a>
     <li class="dropdown-divider"></li>
-      <a class="dropdown-item" href="javascript:void(0)">
+      <a class="dropdown-item" href="https://github.com/kuntulsu/kraity">
       <span><span class="fa fa-github"></span>Github</span>
     </a>
     <a class="dropdown-item" href="javascript:void(0)">
@@ -273,7 +276,7 @@ div.h4 {
     </a>
     <li class="dropdown-divider"></li>
     <a class="dropdown-item" href="javascript:void(0)">
-      <span><span class="fa fa-info-circle"></span>kraity : About</span>
+      <span><span class="fa fa-info-circle"></span>Kraity : About</span>
     </a>
     <a class="dropdown-item" href="{%url 'logout'%}"><span class="fa fa-power-off"></span>Quit</a>
 
@@ -296,7 +299,7 @@ div.h4 {
       </div>
       <ul class="app-menu">
         <li>
-          <a class="app-menu__item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'dashboard_raw'%}')">
+          <a class="app-menu__item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'dashboard'%}')">
             <i class="app-menu__icon fa fa-dashboard"></i>
             <span class="app-menu__label">Dashboard</span>
           </a>
@@ -310,6 +313,7 @@ div.h4 {
 
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'meminfo'%}')"><i class="icon fa fa-microchip"></i> Memory Room</a></li>
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'diskinfo'%}')"><i class="icon fa fa-hdd-o"></i> Disk Room</a></li>
+            <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'hwlist'%}')"><i class="icon fa fa-microchip"></i> Hardware Room</a></li>
           </ul>
         </li>
 
@@ -319,6 +323,11 @@ div.h4 {
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)"
              onclick="loader('{% url 'filefinder'%}')"><i class="icon fa fa-search"></i> File Finder</a></li>
           </ul>
+
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" id="navloader" href="javascript:void(0)"
+             onclick="loader('{% url 'filemanager'%}')"><i class="icon fa fa-folder"></i> File Explorer</a></li>
+          </ul>
           <ul class="treeview-menu">
 
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{% url 'web_terminal'%}')"><i class="icon fa fa-terminal"></i> Terminal on Web</a></li>
@@ -327,10 +336,10 @@ div.h4 {
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{% url 'sysnet'%}')"><i class="icon fa fa-sitemap"></i> Networks</a></li>
           </ul>
           <ul class="treeview-menu">
-            <li><a class="treeview-item" id="navloader"  href="javascript:void(0)" onclick="loader('{% url 'syslog'%}')"><i class="icon fa fa-circle-o"></i> FTP Server</a></li>
+            <li><a class="treeview-item" id="navloader"  href="javascript:void(0)" onclick="loader('{% url 'ftp'%}')"><i class="icon fa fa-circle-o"></i> FTP Server</a></li>
           </ul>
           <ul class="treeview-menu">
-            <li><a class="treeview-item" id="navloader"  href="javascript:void(0)" onclick="loader('{% url 'syslog'%}')"><i class="icon fa fa-circle-o"></i> SSH Server</a></li>
+            <li><a class="treeview-item" id="navloader"  href="javascript:void(0)" onclick="loader('{% url 'ssh'%}')"><i class="icon fa fa-circle-o"></i> SSH Server</a></li>
           </ul>
           <ul class="treeview-menu">
             <li><a class="treeview-item" id="navloader"  href="javascript:void(0)" onclick="loader('{% url 'syslog'%}')"><i class="icon fa fa-circle-o"></i> Telnet</a></li>
@@ -341,7 +350,7 @@ div.h4 {
 
         <li class="treeview"><a class="app-menu__item" href="javascript:void(0)" data-toggle="treeview"><i class="app-menu__icon fa fa-cogs"></i><span class="app-menu__label">System</span><i class="treeview-indicator fa fa-angle-right"></i></a>
           <ul class="treeview-menu">
-            <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{% url 'syslog'%}')"><i class="icon fa fa-circle-o"></i> SysLog</a></li>
+            <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{% url 'syslog'%}')"><i class="icon fa fa-circle-o"></i> System Logs</a></li>
 
             <li><a class="treeview-item" id="navloader" href="http://localhost/kiara2/index.php/admin/setting"><i class="icon fa fa-circle-o"></i> Settings</a></li>
             <li><a class="treeview-item" id="navloader" href="javascript:void(0)" onclick="loader('{%url 'sysinfo'%}')"><i class="icon fa fa-circle-o"></i> System Informations</a></li>
@@ -365,8 +374,14 @@ div.h4 {
         </li>
 
       </ul>
-    <div class="sidefooter text-grey text-center" style="bottom: 10px;position: absolute;font-size: 12px">
-
+    <div class="sidefooter text-grey" style="font-size: 12px;position: relative;">
+      <div class="container">
+        <ul class="list-unstyled">
+        <li class=" mx-auto">Using Kraity Version : {{Kversion}}</li>
+        <li class=" mx-auto">Server Time : {{datetime|date:"h:i:s A"}}</li>
+        <li class=" mx-auto">Under License : GPL v3 License</li>
+      </ul>
+      </div>
 
     </div>
 
@@ -417,7 +432,7 @@ div.h4 {
             There is problem with Authenticator, are you sure the username & password combination are correct?
           </div>
 
-          <h4 class="text-center">PyDServ Authentication</h4>
+          <h4 class="text-center">Kraity Authentication</h4>
             <div id="Dashboardform">
 
               <div class="row">
@@ -462,7 +477,6 @@ div.h4 {
     <!-- Page specific javascripts-->
     <!-- <script type="text/javascript" src="js/plugins/chart.js"></script> -->
 <script>
-
 function myFunction(x) {
     if (x.matches) { // If media query matches
         $("#uptime").hide()
@@ -486,7 +500,7 @@ $("body").removeClass("sidenav-toggled")
 $("#sessionState").hide()
 $("#previous").addClass("disabled")
 $("#loginError").hide()
-navigate = ['{%url 'dashboard_raw'%}']
+navigate = ['{%url 'dashboard'%}']
 navigate_current = 1
 $(document).ready(function(){
   var pinging = setInterval(function(){
@@ -504,6 +518,7 @@ $(document).ready(function(){
           $("#dashboardsubmit").removeAttr("title")
           $("#sessionState").show(500)
           $("#offlineModal").modal("show")
+
         }
           
         
@@ -560,7 +575,7 @@ function loader(url){
       $("#offlineModal").modal('show')
       $("#offlineModal").modal('hide')
       $("#ajaxError").empty()
-      $("#loader").html("HTTP Request Failed (kraity : "+ xhr.status+ " " + xhr.statusText + ")")
+      $("#loader").html("HTTP Request Failed (Error Code :"+ xhr.status+ " " + xhr.statusText + ")")
     }
   })
 }
@@ -582,8 +597,7 @@ function do_refresh(){
   })
 }
 // login controller
-
-$("#dashboardsubmit").click(function(){
+function dashboard_submitter(){
   $.post("{%url 'dashboard_login'%}"
     ,{
       "username" : $("#dashUsername").val(),
@@ -599,11 +613,17 @@ $("#dashboardsubmit").click(function(){
               $("#loginError").hide()
             },7000)
           }
-    }
-
-    )
+    })
+}
+$("#dashboardsubmit").click(function(){
+  dashboard_submitter()
 })
-
+$("#Dashboardform :input").on("keyup",function(){
+    event.preventDefault()
+    if (event.keyCode == 13){
+      dashboard_submitter()
+    }
+})
 
 
 </script>

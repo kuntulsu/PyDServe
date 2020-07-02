@@ -1,0 +1,156 @@
+<style type="text/css">
+	tbody > tr{
+		cursor: pointer;
+	}
+</style>
+<div class="container">
+	<h4>File Explorer</h4>
+	<div class="alert alert-warning border-warning">we're made this as feature-less, some feature that can cause any harm like copy,move,delete not available</div>
+	<form>
+		<div class="row">
+			<div class="col-md-6 mb-5">
+				<input type="text" name="pathform" class="form-control" id="pathfinder" placeholder="Fill The Path." value="{{dirlist.current_dir}}" autocomplete="off" style="font-size: 13px">
+				<span class="bmd-help" style="display: block;">Then Press Enter / Return to go</span>
+			</div>
+			<div class="col-md-6 mb-5">
+				<div class="input-group">
+
+						  <div class="input-group-prepend w-100">
+						    <div class="input-group-text">
+						      <input type="checkbox" id="isHidden">
+						      <span class="pl-2">Show Hidden</span>
+						    </div>
+						    <input type="text" name="search" class="form-control w-100 d-block pl-2" id="filter" placeholder="Find..." onkeyup="filterTable()">
+						    <span class="bmd-help" style="display:block;top: 35px">Search in the current dir, wide search use : <a href="javascript:void(0)" onclick="loader('{%url 'filefinder'%}')">File Finder</a></span>
+						    </div>
+						  </div>
+						  
+						  
+			</div>
+				
+			</div>
+		</div>
+	</form>
+	
+	<div class="table-responsive">
+		{{dirlist.direct.folder|length}} Directories and {{dirlist.direct.file|length}} Files was Found
+		<div class="mb-3">
+				<div class="progress" onclick="$('#disk_tool').toggle(200)" style="cursor: pointer;background: #b4b5b7">
+				  <div class="progress-bar bg-{{dirlist.disk_usage.status}}" role="progressbar" style="width: {{dirlist.disk_usage.percent}}%" aria-valuenow="{{dirlist.disk_usage.percent}}" aria-valuemin="0" aria-valuemax="100">
+				  	{{dirlist.disk_usage.percent}}% used
+				  </div>
+				  
+				</div>
+				<div class="alert alert-{{dirlist.disk_usage.status}} border-{{dirlist.disk_usage.status}} hidden rounded-0" id="disk_tool">
+				  	<div class="row">
+				  		<div class="col-md-3 text-center">
+				  			{{dirlist.disk_usage.total}} in Total
+				  		</div>
+				  		<div class="col-md-3 text-center">
+				  			{{dirlist.disk_usage.used}} are Used
+				  		</div>
+				  		<div class="col-md-3 text-center">
+				  			{{dirlist.disk_usage.free}} are Free
+				  		</div>
+				  		<div class="col-md-3 text-center">
+				  			{{dirlist.disk_usage.percent}}% is Used
+				  		</div>
+				  	</div>
+				</div>
+		</div>
+		<table class="table table-hover table-sm">
+		<thead class="bg-dark">
+			<tr>
+				<td>Name</td>
+				<td>Size</td>
+				<td>Type</td>
+				<td>Accessed</td>
+			</tr>
+		</thead>
+		<tbody id="table-dir">
+			{%if dirlist.direct.error%}
+				<tr>
+					<td colspan="4" class="text-center font-italic">{{dirlist.direct.message}}</td>
+				</tr>
+			{%else%}
+				{%for x in dirlist.direct.folder%}
+					<tr ondblclick="enterdir('{{x.path}}')" class="{{x.attr}}">
+						<td><span class="fa fa-folder pr-2"></span>{{x.name}}</td>
+						<td>{{x.size}} Item</td>
+						<td>{{x.type}}</td>
+						<td>{{x.last_accessed}}</td>
+					</tr>
+				{%endfor%}
+				{%for x in dirlist.direct.file%}
+					<tr class="{{x.attr}} filer" onmouseenter="$(this).find('.download-hidden').show(300)" onmouseleave="$(this).find('.download-hidden').hide(300)">
+						<td><span class="fa fa-file pr-2"></span><a href="javascript:void(0)" onclick="filedownload('{{x.path}}','{{x.name}}')"><span class="fa fa-download pr-2 download-hidden" title="Download : {{x.name}}"></span></a>{{x.name}}</td>
+						<td width="100">{{x.size}}</td>
+						<td width="150">{{x.type}}</td>
+						<td width="180">{{x.last_accessed}}</td>
+					</tr>
+				{%endfor%}
+			{%endif%}
+		</tbody>
+	</table>
+	</div>
+</div>
+<script>
+
+	$(".download-hidden").hide()
+	$(".hidden").hide()
+	$("#isHidden").click(function(){
+		$(".hidden").toggle()
+	})
+	function enterdir(path) {
+		while(path.indexOf("+") >= 0){
+		    path = path.replace("+","@plus")
+		}
+		loader('{%url 'filemanager'%}?path='+encodeURI(path))
+	}
+function filterTable() {
+	isHidden = document.getElementById("isHidden").checked
+
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("filter");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("table-dir");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+
+      		tr[i].style.display = "";
+
+        
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+  if(document.getElementById("filter").value.length == 0){
+  	if (isHidden == false){
+  		$(".show").show()
+  		$(".hidden").hide()
+  	}else{
+  		$(".hidden").show()
+  	}
+  }
+}
+$("#pathfinder").on("keyup",function(){
+    event.preventDefault()
+    if (event.keyCode == 13){
+      enterdir($("#pathfinder").val())
+    }
+})
+function filedownload(path,filename){
+	while(path.indexOf("+") >= 0){
+		    path = path.replace("+","@plus")
+		}
+	while(filename.indexOf("+") >= 0){
+		    filename = filename.replace("+","@plus")
+		}
+	window.open('{%url 'filemanager_download'%}?path='+encodeURI(path)+'&filename='+encodeURI(filename),"blank")
+}
+</script>
+</script>

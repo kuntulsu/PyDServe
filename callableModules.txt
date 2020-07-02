@@ -6,4 +6,3 @@ MySQLdb
 psutil
 pytz
 sqlparse
-nmap

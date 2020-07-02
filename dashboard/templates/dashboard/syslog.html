@@ -1,14 +1,46 @@
 
-<h4>kraity : SysLog</h4>
-	<div class="alert alert-warning border-warning">
-		due to execution time issue, we just showing 500 of syslog. You can see the rest of lines at <code>/var/log/syslog</code>
+<h4>kraity : Log</h4>
+
+
+
+<div class="container-fluid">
+	<div class="btn-group" role="group" >
+	  <button type="button" class="btn btn-info btn-raised mt-1 ml-1 mb-1 mr-1" onclick="loader('{%url 'syslog'%}')">System Log</button>
+	  <button type="button" class="btn btn-info btn-raised mt-1 ml-1 mb-1 mr-1" onclick="loader('{%url 'syslog'%}?unit=kern')">Kernel Log</button>
+	  <button type="button" class="btn btn-info btn-raised mt-1 ml-1 mb-1 mr-1" onclick="loader('{%url 'syslog'%}?unit=auth')">Auth Log</button>
 	</div>
-
-
-<div class="container">
-		<div class="table-responsive" style="border: 1px solid #C50ED2;padding:5px;max-height: 400px">
-			<pre>{%for x in logs%}{{x}}{%endfor%}</pre>
-		</div>
+	<h6>
+		{%if request.GET.unit == "kern"%}
+			Kernel Log : {{log|length}} items was shown
+		{%elif request.GET.unit == "auth"%}
+			Auth Log : {{log|length}} items was shown
+		{%else%}
+			System Log : {{log|length}} items was shown
+		{%endif%}
+	</h6>
+	*sorted from old to the newest
+			<div class="table-responsive" style="max-height: 450px">
+				<table class="table table-bordered table-sm">
+				<thead class="bg-dark">
+					<tr>
+						<td width="150">Date Time</td>
+						<td width="200">Host/Component</td>
+						<td>Message</td>
+					</tr>
+				</thead>
+					<tbody>
+					{%for x in log%}
+					<tr>
+						{%for y in x%}
+						<td style="vertical-align: middle;word-break: break-word">
+							{{y}}
+						</td>
+						{%endfor%}
+					</tr>
+					{%endfor%}
+				</tbody>
+			</table>
+			</div>
 	</div>
 <script>
 

@@ -1,26 +1,25 @@
 {%extends 'dashboard/base.html'%}
 {%block main%}
-<style type="text/css">
 
-  </style>
+
   <span id="proved">exist</span>
   <script>$("#proved").hide()</script>
 <div class="container">
 <h4>Dashboard ::</h4>
-	<!--Round Progressbar Here -->
-	<div class="progressing">
-	<div class="row">
-		<div class="col-sm-4 mb-5">
-        	<h2 class="h6 font-weight-bold text-center mb-4">CPU</h2>
+  <!--Round Progressbar Here -->
+  <div class="progressing">
+  <div class="row">
+    <div class="col-sm-4 mb-5">
+          <h2 class="h6 font-weight-bold text-center mb-4">CPU</h2>
 
         <!-- Progress bar 1 -->
         
-        	<div class="cpu-progress progress mx-auto">
-          <span class="progress-left">
-            <span class="progress-bar progress-cpu"></span>
+          <div class="cpu-progress progress circle-progress mx-auto">
+          <span class="circle-progress-left">
+            <span class="circle-progress-bar progress-bar progress-cpu"></span>
           </span>
-          <span class="progress-right">
-            <span class="progress-bar progress-cpu"></span>
+          <span class="circle-progress-right">
+            <span class="circle-progress-bar progress-bar progress-cpu"></span>
           </span>
           <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
             <div class="h2 font-weight-bold"><span class="cpu-load">N/A</span><sup class="small">%</sup></div>
@@ -31,26 +30,26 @@
         <!-- Demo info -->
         <div class="row text-center mt-4">
           <div class="col-12">
-          	{{cpuname}}(x{{cpu_count}})
+            {{cpuname}}(x{{cpu_count}})
           </div>
           <div class="col-12">
             <a href="#" onclick="loader('{%url 'cpuinfo'%}')">More About CPU</a>
           </div>
         </div>
         <!-- END -->
-		</div>
+    </div>
 
-		<!-- Memory -->
-				<div class="col-sm-4 mb-5">
-        	<h2 class="h6 font-weight-bold text-center mb-4">Memory</h2>
+    <!-- Memory -->
+        <div class="col-sm-4 mb-5">
+          <h2 class="h6 font-weight-bold text-center mb-4">Memory</h2>
 
         <!-- Progress bar 1 -->
-        <div class="mem-progress progress mx-auto">
-          <span class="progress-left">
-            <span class="progress-bar progress-mem"></span>
+        <div class="mem-progress progress circle-progress mx-auto">
+          <span class="circle-progress-left">
+            <span class="circle-progress-bar progress-bar progress-mem"></span>
           </span>
-          <span class="progress-right">
-            <span class="progress-bar progress-mem"></span>
+          <span class="circle-progress-right">
+            <span class="circle-progress-bar progress-bar progress-mem"></span>
           </span>
           <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
             <div class="h2 font-weight-bold"><span class="mem-load">N/A</span><sup class="small">%</sup></div>
@@ -61,29 +60,29 @@
         <!-- Demo info -->
         <div class="row text-center mt-4">
           <div class="col-md-6 border-right">
-            <div class="h4 font-weight-bold mb-0">{{meminfo.total_mem}} G</div><span class="small text-gray">RAM in Total</span>
+            <div class="h4 font-weight-bold mb-0">{{meminfo.total_mem}}</div><span class="small text-gray">RAM in Total</span>
           </div>
           <div class="col-md-6">
-            <div class="h4 font-weight-bold mb-0">{{meminfo.free_mem}} G</div><span class="small text-gray">RAM Available</span>
+            <div class="h4 font-weight-bold mb-0">{{meminfo.free_mem}}</div><span class="small text-gray">RAM Available</span>
           </div>
           <div class="col-12">
             <a href="#" onclick="loader('{%url 'meminfo'%}')">More About RAM</a>
           </div>
         </div>
         <!-- END -->
-		</div>
-		<!-- end of memory -->
-		<!-- disk -->
-				<div class="col-sm-4 mb-5">
-        	<h2 class="h6 font-weight-bold text-center mb-4">Disk Usage</h2>
+    </div>
+    <!-- end of memory -->
+    <!-- disk -->
+        <div class="col-sm-4 mb-5">
+          <h2 class="h6 font-weight-bold text-center mb-4">Disk Usage</h2>
 
         <!-- Progress bar 1 -->
-        <div class="disk-progress progress mx-auto">
-          <span class="progress-left">
-            <span class="progress-bar progress-disk"></span>
+        <div class="disk-progress circle-progress progress mx-auto">
+          <span class="circle-progress-left">
+            <span class="circle-progress-bar progress-bar progress-disk"></span>
           </span>
-          <span class="progress-right">
-            <span class="progress-bar progress-disk"></span>
+          <span class="circle-progress-right">
+            <span class="circle-progress-bar progress-bar progress-disk"></span>
           </span>
           <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
             <div class="h2 font-weight-bold"><span class="disk-load">N/A</span><sup class="small">%</sup></div>
@@ -97,29 +96,29 @@
             <div class="h4 font-weight-bold mb-0">{{diskinfo.mp}}</div><span class="small text-gray">is mounted in filesystem</span>
           </div>
           <div class="col-md-6">
-            <div class="h4 font-weight-bold mb-0">{{diskinfo.disk_free}} G</div><span class="small text-gray">Free of {{diskinfo.disk_total}} G in Total</span>
+            <div class="h4 font-weight-bold mb-0">{{diskinfo.disk_free}}</div><span class="small text-gray">Free of {{diskinfo.disk_total}} in Total</span>
           </div>
           <div class="col-12">
             <a href="#" onclick="loader('{%url 'diskinfo'%}')">More About Disk</a>
           </div>
         </div>
         <!-- END -->
-		</div>
-		<!-- end of disk -->
-	</div>
+    </div>
+    <!-- end of disk -->
+  </div>
         </div>
-	<!-- End Of round progressbar -->
+  <!-- End Of round progressbar -->
 </div>
 <script type="text/javascript">
-    
+  
   $(document).ready(function (){
       var main_thread = setInterval(function(){
           $.getJSON("{%url 'sysload'%}",function(data){
             $(".cpu-progress").each(function() {
                 var cpuvalue = data.cpu_load;
                 $('.cpu-load').html(data.cpu_load)
-                var cpuleft = $(this).find('.progress-left .progress-bar');
-                var cpuright = $(this).find('.progress-right .progress-bar');
+                var cpuleft = $(this).find('.circle-progress-left .circle-progress-bar');
+                var cpuright = $(this).find('.circle-progress-right .circle-progress-bar');
                 cpuleft.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
                 if (cpuvalue > 0) {
                   if (cpuvalue < 50) {
@@ -137,8 +136,8 @@
             $(".mem-progress").each(function() {
                 var memvalue = data.memory_load;
                 $('.mem-load').html(data.memory_load)
-                var left = $(this).find('.progress-left .progress-bar');
-                var right = $(this).find('.progress-right .progress-bar');
+                var left = $(this).find('.circle-progress-left .circle-progress-bar');
+                var right = $(this).find('.circle-progress-right .circle-progress-bar');
                 left.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
                 if (memvalue > 0) {
                   if (memvalue <= 40) {
@@ -159,8 +158,8 @@
             $(".disk-progress").each(function() {
                 var diskvalue = data.disk_load;
                 $('.disk-load').html(data.disk_load)
-                var left = $(this).find('.progress-left .progress-bar');
-                var right = $(this).find('.progress-right .progress-bar');
+                var left = $(this).find('.circle-progress-left .circle-progress-bar');
+                var right = $(this).find('.circle-progress-right .circle-progress-bar');
                 left.css('transform', 'rotate(' + percentageToDegrees(0) + 'deg)')
                 if (diskvalue > 0) {
                   if (diskvalue <= 50) {
@@ -184,10 +183,8 @@
               clearInterval(main_thread)
             }
           $("#refresher").click(function(){
-            console.log("log")
             clearInterval(main_thread)
           })
-
       },3000)
 
   })
@@ -196,4 +193,5 @@
 
 
 </script>
+
 {%endblock%}

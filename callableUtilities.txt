@@ -8,3 +8,4 @@ swaplabel
 cat
 blkid
 lsblk
+rsyslogd

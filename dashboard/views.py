@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect,Http404, HttpResponse
+from django.http import HttpResponseRedirect,Http404, HttpResponse,FileResponse, QueryDict
 import psutil
+from psutil._common import bytes2human
 from django.http import JsonResponse
 import cpuinfo
 from django.contrib.auth.decorators import login_required
@@ -8,10 +9,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login,logout as dlogout,authenticate
 import distro
 from importlib.util import find_spec as find_modules
-from .helper import Kcores
-from .helper.Kdecorator import module_required, ajax_required
+from .helper import core
+from .helper.decorator import module_required, ajax_required
 import subprocess
-
+import datetime
 # Create your views here.
 
 
@@ -39,42 +40,19 @@ def index(request):
 		'cpuname' : cpuinfo.get_cpu_info()['brand'],
 		'diskinfo' : {
 			'mp' : mp,
-			'disk_total' : round(rootDusage.total / 1024000000,1),
-			'disk_free' : round(rootDusage.free / 1024000000,1)
+			'disk_total' : bytes2human(rootDusage.total),
+			'disk_free' : bytes2human(rootDusage.free)
 		},
 		'meminfo' : {
-			'total_mem' : round(meminfo.total / 1024000000,2),
-			'free_mem' : round(meminfo.available / 1024000000,2)
+			'total_mem' : bytes2human(meminfo.total),
+			'free_mem' : bytes2human(meminfo.available)
 		},
+		'Kversion' : core.VERSION,
+		'datetime' : datetime.datetime.now(),
 	}
+	if request.is_ajax():
+		return render(request,'dashboard/dashboard_raw.html',context)
 	return render(request,'dashboard/index.html',context)
-@login_required
-@ajax_required
-def dashboard_raw(request):
-	meminfo = psutil.virtual_memory()
-	# getting / device
-	diskpart = psutil.disk_partitions("/")
-	rootDusage = psutil.disk_usage("/")
-	for x in diskpart:
-		if x.mountpoint == "/":
-			mp = x.device
-		else:
-			pass
-	context = {
-		'distro' : distro.id(),
-		'cpu_count' : psutil.cpu_count(),
-		'cpuname' : cpuinfo.get_cpu_info()['brand'],
-		'diskinfo' : {
-			'mp' : mp,
-			'disk_total' : round(rootDusage.total / 1024000000,1),
-			'disk_free' : round(rootDusage.free / 1024000000,1)
-		},
-		'meminfo' : {
-			'total_mem' : round(meminfo.total / 1024000000,2),
-			'free_mem' : round(meminfo.available / 1024000000,2)
-		},
-	}
-	return render(request,'dashboard/dashboard_raw.html',context)
 
 
 @login_required
@@ -129,7 +107,6 @@ def ping(request):
 	elif not request.user.is_authenticated:
 		return HttpResponse("login",content_type="text/plain")
 
-
 @csrf_exempt
 @ajax_required
 def dashboard_login(request):
@@ -149,9 +126,12 @@ def dashboard_login(request):
 @ajax_required
 @module_required('subprocess')
 def syslog(request):
-	logs = subprocess.Popen("tail -n 500 /var/log/syslog".split(),stdout=subprocess.PIPE).communicate()[0].decode()
+	try:
+		unit = request.GET['unit']
+	except:
+		unit = "syslog"
 	context = {
-	'logs' : logs,
+		'log' : core.log_generator(unit),
 	}
 	return render(request,'dashboard/syslog.html',context)
 
@@ -234,18 +214,14 @@ def servroom(request):
 @ajax_required
 def cpu_info(request):
 	f = open("/proc/cpuinfo","r")
-	file_content = []
-	for x in f.readlines():
-		file_content.append(x)
+	file_content = f.readlines()
 	f.close()
 	context = {
 		"cpuinfo" : cpuinfo.get_cpu_info(),
 		"psutil" : psutil,
 		"distro" : distro,
 		"cpu_raw": file_content,
-		"cpuhelper":Kcores.cpuhelper(),
-		"cpuiter" : Kcores.cpuiter(),
-		"cpuiter_raw" : Kcores.cpuiter_raw(),
+		"cpu_percent" :psutil.cpu_percent(percpu=True),
 	}
 	return render(request,'dashboard/servroom.cpuinfo.html',context)
 
@@ -254,7 +230,7 @@ def cpu_info(request):
 @ajax_required
 def meminfo(request):
 	context = {
-		"swap" : Kcores.swapinfo(),
+		"swap" : core.swapinfo(),
 	}
 	return render(request,'dashboard/servroom.meminfo.html',context)
 
@@ -263,10 +239,17 @@ def meminfo(request):
 @module_required(['subprocess','psutil'])
 def diskinfo(request):
 	context = {
-		"disklist" : Kcores.disklist(),
-		"raw_disk" : subprocess.Popen("lsblk --fs".split(),stdout=subprocess.PIPE).communicate()[0].decode()
+		"lsblk" : subprocess.Popen("lsblk -J -o PATH,FSAVAIL,FSSIZE,FSTYPE,FSUSED,FSUSE%,MOUNTPOINT,LABEL,UUID,RO,RM,MODEL,TYPE,PKNAME,KNAME".split(),stdout=subprocess.PIPE).communicate()[0].decode(),
 	}
 	return render(request,'dashboard/servroom.diskinfo.html',context)
+
+@ajax_required
+@login_required
+def hardwarelist(request):
+	context = {
+		"lshw" : subprocess.Popen("lshw -quiet -html".split(),stdout=subprocess.PIPE).communicate()[0].decode(),
+	}
+	return HttpResponse(f"<div class='container'><h4>Servroom :: Hardware</h4>{context['lshw']}</div>")
 
 
 @login_required
@@ -281,6 +264,7 @@ def web_terminal(request):
 @login_required()
 @module_required("psutil")
 @ajax_required
+#json improve
 def sysnet(request):
 	devhelper = psutil.net_if_addrs()
 	try:
@@ -350,12 +334,45 @@ def filefinder_post(request):
 	query = request.POST['QueryInput']
 	is_sensitive = request.POST['QueryCaseSens']
 	if is_sensitive == 'false':
-		find =  subprocess.Popen(f"locate -i -b -n 100 {query}".split(),stdout=subprocess.PIPE).communicate()[0].decode()
+		find =  subprocess.Popen(f"locate -i -b -n 500 {query}".split(),stdout=subprocess.PIPE).communicate()[0].decode()
 	else:
-		find =  subprocess.Popen(f"locate -b -n 100 {query}".split(),stdout=subprocess.PIPE).communicate()[0].decode()
+		find =  subprocess.Popen(f"locate -b -n 500 {query}".split(),stdout=subprocess.PIPE).communicate()[0].decode()
 
 	result = {
 		"result" : find,
 		"result_count" : find.count("\n")
 	}
 	return JsonResponse(result)
+
+@ajax_required
+@login_required
+def ssh(request):
+	context = {
+		'is_active' : subprocess.Popen("systemctl is-active ssh".split(),stdout=subprocess.PIPE).communicate()[0].decode(),
+		'sshd_man' : subprocess.Popen("man sshd".split(),stdout=subprocess.PIPE).communicate()[0].decode(),
+		'sshdconf_man' : subprocess.Popen("man sshd_config".split(),stdout=subprocess.PIPE).communicate()[0].decode(),
+
+	}
+	return render(request,'dashboard/sysadmin.ssh.html',context)
+def ftp(request):
+	pass
+
+@login_required
+@ajax_required
+@csrf_exempt
+def file_manager(request):
+	try:
+		path = request.GET['path']
+		path = path.replace("@plus","+")
+	except:
+		path = "/"
+	context = {
+		'dirlist' : core.dirlisting(path)
+	}
+	return render(request,'dashboard/sysadmin.filemanager.html',context)
+
+@login_required
+def file_manager_download(request):
+	path = request.GET['path'].replace("@plus","+")
+	filename = request.GET['filename'].replace("@plus","+")
+	return FileResponse(open(path, 'rb'),as_attachment=True,filename=filename)

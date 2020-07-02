@@ -1,13 +1,13 @@
+#!/usr/bin/python3
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import subprocess
-sys.path.insert(1,f"{os.getcwd()}/lib/python3.8/site-packages")
-user = subprocess.Popen("whoami",stdout=subprocess.PIPE).communicate()[0].decode().replace("\n","")
-if user != "root":
-	print("please run the server as root")
+sys.path.insert(1,"lib/python3.8/site-packages")
+print("Validating the User...")
+if os.geteuid() != 0:
+	print("please run the script as super user\nExiting...")
 	sys.exit()
-
+print("Access Granted, Continue to runserver procedure..")
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kraity.settings')
     try:

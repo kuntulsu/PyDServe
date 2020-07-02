@@ -1,0 +1,5 @@
+-Telegram send message to sysadmin due to error occured
+-Cron job to for reporting server monthly performance
+-File Manager (django-filer)
+-Task Manager
+-Web Terminal (weTTy || shellinabox)
