@@ -23,5 +23,6 @@ password : adminadmin
 [Urgent]
 - Ganti index menu yang belom ada isinya, biar bisa bedain mana yang error, dan mana yang belom ada index nya
 - Benerin Terminal On WEB nya, kita cape harus bolak balik buka putty/terminal buat remote
+
 [normal]
 ini file manager pake apaan dah service nya?
